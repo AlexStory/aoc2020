@@ -1,4 +1,5 @@
 open System.IO
+open Microsoft.FSharp.Linq.NullableOperators
 
 type Passport = {
     RawString: string
@@ -91,14 +92,69 @@ module Passport =
         |> ParsePassportId
         |> ParseCountryId
 
+    let validateBirthYear passport =
+        let testYear x = x >= 1920 && x <= 2002
+        
+        match passport.BirthYear with
+        | None -> false
+        | Some(year) ->  year |> int |> testYear
+    
+
+    let validateIssueYear passport =
+        let testYear x = x >= 2010 && x <= 2020
+        match passport.IssueYear with
+        | None -> false
+        | Some(year) -> year |> int |> testYear
+
+    let validateExpirationYear passport =
+        let testYear x = x >= 2020 && x <= 2030
+        match passport.ExpirationYear with
+        | None -> false
+        | Some(year) -> year |> int |> testYear
+
+    let validateHeight passport =
+        let testHeight (ht: string) =
+            match ht.Contains("cm"), ht.Contains("in") with
+            | true, _ -> ht.Replace("cm", "") |> int |> fun x -> x >= 150 && x <= 193
+            | _, true -> ht.Replace("in", "") |> int |> fun x -> x >= 59 && x <= 76
+            | _, _ -> false
+        
+        match passport.Height with
+        | None -> false
+        | Some(height) -> testHeight height
+
+    let validateHairColor passport =
+        let testColor color =
+            String.length color = 7
+            && color.[0] = '#'
+            && Array.length (Array.filter (fun x -> (Array.contains x [|'0'..'9'|]) || (Array.contains x [|'a'..'f'|])) (color.[1..].ToCharArray())) = 6
+
+        match passport.HairColor with
+        | None -> false
+        | Some(color) -> testColor color
+
+    let validateEyeColor passport =
+        match passport.EyeColor with
+        | None -> false
+        | Some(color) -> List.contains color ["brn"; "blu"; "amb"; "gry"; "grn"; "hzl"; "oth"] 
+
+    let validatePassportId passport =
+        let testNumber n =
+            String.length n = 9
+            && String.length (String.filter(fun x -> List.contains x ['0'..'9']) n) = 9
+        
+        match passport.PassportId with
+        | None -> false
+        | Some(number) -> testNumber number 
+
     let isValid passport =
-        Option.isSome passport.BirthYear
-        && Option.isSome passport.IssueYear
-        && Option.isSome passport.ExpirationYear
-        && Option.isSome passport.Height
-        && Option.isSome passport.HairColor
-        && Option.isSome passport.EyeColor
-        && Option.isSome passport.PassportId
+        validateBirthYear passport
+        && validateIssueYear passport
+        && validateExpirationYear passport
+        && validateHeight passport
+        && validateHairColor passport
+        && validateEyeColor passport
+        && validatePassportId passport
 
 let content = 
     "assets/input.txt"
