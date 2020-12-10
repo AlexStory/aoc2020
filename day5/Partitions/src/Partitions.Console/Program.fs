@@ -2,6 +2,7 @@ open System.IO
 
 let rows = [0..127]
 let cols = [0..7]
+let tickets = [0..866]
 type Row = F | B
 type Seat = L | R
 
@@ -90,10 +91,18 @@ let content =
     "assets/input.txt"
     |>File.ReadAllLines 
     |> Array.map (Ticket.create >> Ticket.seatId)
-    |> Array.max
+
+let notFound n =
+     not (Array.contains n content)
+     && (Array.contains (n-1) content)
+     && (Array.contains (n+1) content)
+
+let ticketNum = 
+    tickets
+    |> Seq.filter notFound 
 
 [<EntryPoint>]
 let main argv =
-    content
+    ticketNum
     |> printfn "%A"
     0 // return an integer exit code
