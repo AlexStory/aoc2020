@@ -28,6 +28,24 @@ let isValid i v =
     let possibles = possibilities i
     Seq.contains v possibles
 
+
+let rec findSum n list=
+    if Seq.isEmpty list then 
+        (0, 0)
+    else 
+        let result  = 
+            list
+            |> Seq.scan (fun acc (i , num) -> (i, num + snd acc)) (0, bigint 0)
+        match Seq.contains n (Seq.tail result |> Seq.map snd) with
+        | true -> 
+            let start = Seq.head list |> fst
+            let stop = Seq.find (fun x -> snd x = n) result |> fst
+            (start, stop)
+        | false -> findSum n (Seq.tail list)
+
+let summate n list = 
+    findSum n (Seq.indexed list)
+
 subset
     |> Seq.indexed
     |> Seq.filter (fun (i, x) -> not (isValid i x))
@@ -38,6 +56,10 @@ subset
 
 [<EntryPoint>]
 let main argv =
+    let n = bigint 217430975
+    summate n content
+    |> fun (start, stop) -> Seq.toArray(content).[start..stop]
+    |> fun lst -> (Seq.min(lst)) + (Seq.max(lst))
     // "alex"
-    // |> printfn "%A"
+    |> printfn "%A"
     0 // return an integer exit code
