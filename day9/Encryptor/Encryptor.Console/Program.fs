@@ -1,17 +1,16 @@
 open System.IO
 
-let getCombinations list =
-    let mutable arr = []
-    for x in list do
-        for y in list do
-            if x <> y then
-                let res = x + y
-                arr <- res :: arr
-    arr
+let getCombinations (list: seq<bigint>) =
+    [
+        for x in list do
+            for y in list do
+                if x <> y then
+                    x + y
+    ]
 
 
 let content = 
-    "input.txt"
+    __SOURCE_DIRECTORY__ + "/input.txt"
     |> File.ReadAllLines
     |> Seq.map bigint.Parse
 
