@@ -80,8 +80,6 @@ let rec iter i n jump busses =
         let second = loop (Array.take i busses) (first + jump) jump
         iter (i+1) first (second - first) busses
 
-    
-
 // let part1 =
 //     printfn "depart: %d" departTime
 //     printfn "busses: %A" busses
@@ -89,8 +87,6 @@ let rec iter i n jump busses =
 //     printfn "earliest: %d"earliest
 //     printfn "wait: %d" waitMinutes
 //     printfn "answer: %d" (earliest * waitMinutes)
-
-
 
 [<EntryPoint>]
 let main argv =
