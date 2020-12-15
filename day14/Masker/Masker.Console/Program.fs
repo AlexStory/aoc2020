@@ -2,6 +2,7 @@ open System
 open System.IO
 open FSharpPlus
 open FSharp.Text.RegexProvider
+open FSharp.Collections
 
 type MaskRegex = Regex< @"(?<=mask\s=\s)(?<Mask>.*)" >
 type MemoryRegex = Regex< @"(?<=mem\[)(?<Index>\d+)\]\s=\s(?<Val>\d+)" >
@@ -13,10 +14,11 @@ let updateString idx v str =
     |> update idx v
     |> String.ofArray
 
-let tupdate idx v list =
-    match tryFind (fst >> (=) idx) list with
-    | None -> Array.append list [| (idx, v) |]
-    | Some(item) -> Array.replace [| item |] [|(idx, v)|] list
+let tupdate (idx: int64) (v: bigint) (list: Map<int64, bigint>) =
+    match Map.tryFindKey (fun k _t -> k = idx) list with
+    | None    -> Map.add idx v list
+    | Some(_) -> Map.change idx (konst (Some(v))) list
+
 
 let (|Mask|Mem|) str = 
     match MaskRegex().IsMatch str with
@@ -61,10 +63,10 @@ let decode mask id =
 let rec runCommands commands memory mask =
     match commands with
     | [||] -> memory 
-    | _  -> 
+    | _    -> 
         match head commands with 
         | Mask x -> runCommands (skip 1 commands) memory (parseMask x) 
-        | Mem x -> 
+        | Mem x  -> 
             let (idx, value) = parseMemory x
 
             if idx < (length memory) then
@@ -72,18 +74,16 @@ let rec runCommands commands memory mask =
             else
                 failwith "oops"
 
-let rec runDecoder commands memory mask =
+let rec runDecoder commands (memory: Map<int64, bigint>) mask =
     match commands with
     | [||] -> memory
-    | _ ->
+    | _    ->
         match head commands with
         | Mask x -> runDecoder (skip 1 commands) memory (parseMask x)
-        | Mem x ->
+        | Mem x  ->
             let (idx, value) = parseMemory x
 
-            let m = 
-                decode mask idx
-                |> fold (fun mem idx -> tupdate idx (bigint value) mem) memory
+            let m = decode mask idx |> fold (fun mem idx -> tupdate idx (bigint value) mem) memory
             runDecoder (skip 1 commands) m mask
 
 let content () =
@@ -91,17 +91,12 @@ let content () =
     |> File.ReadAllLines
 
 let part1 () =
-    let commands = content ()
-    let memory = Array.init 100_000 (konst 0L)
-    runCommands commands memory ""
+    runCommands (content()) (Array.init 100_000 (konst 0L)) ""
     |> sum
 
 let part2() =
-    let commands = content()
-    let memory = [||]
-
-    runDecoder commands memory ""
-    |> map snd 
+    runDecoder (content()) Map.empty ""
+    |> Map.values
     |> sum
 
 [<EntryPoint>]
