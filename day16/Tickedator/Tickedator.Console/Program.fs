@@ -2,6 +2,7 @@ open System.IO
 open FSharpPlus
 open FSharpPlus.Lens
 open FSharp.Text.RegexProvider
+open FSharp.Text.RegexExtensions
 
 type RuleRegex = Regex< @"(?<RuleName>.*):\s(?<LHMin>\d*)-(?<LHMax>\d*)\sor\s(?<RHMin>\d*)-(?<RHMax>\d*)" >
 
@@ -19,10 +20,10 @@ module Rule =
         let matched = RuleRegex().TypedMatch(text)
         {
             Name = matched.RuleName.Value
-            LeftMin = int matched.LHMin.Value
-            LeftMax = int matched.LHMax.Value
-            RightMin = int matched.RHMin.Value
-            RightMax = int matched.RHMax.Value
+            LeftMin = int matched.LHMin.AsInt
+            LeftMax = int matched.LHMax.AsInt
+            RightMin = int matched.RHMin.AsInt
+            RightMax = int matched.RHMax.AsInt
         }
 
     let passes num rule =
@@ -61,7 +62,6 @@ let rec trimCandidates candidates =
         let newMap = Map.fold (fun acc key value -> removeOthers key (head value) acc) candidates singles
         trimCandidates newMap
 
-
 let content = 
     let rawContent = 
         __SOURCE_DIRECTORY__ + "/input.txt"
@@ -94,7 +94,7 @@ let partTwo () =
     |> Map.values 
     |> Seq.map head
     |> map (fun i -> ticket.[i])
-    |> map (fun (n: int) -> bigint n)
+    |> map (int64)
     |> Seq.reduce ( * ) 
     |> printfn "%A"
 
