@@ -61,7 +61,6 @@ let rec trimCandidates candidates =
         let newMap = Map.fold (fun acc key value -> removeOthers key (head value) acc) candidates singles
         trimCandidates newMap
 
-
 let content = 
     let rawContent = 
         __SOURCE_DIRECTORY__ + "/input.txt"
