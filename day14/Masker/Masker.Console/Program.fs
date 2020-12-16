@@ -2,7 +2,7 @@ open System
 open System.IO
 open FSharpPlus
 open FSharp.Text.RegexProvider
-open FSharp.Collections
+open System.Collections.Generic
 
 type MaskRegex = Regex< @"(?<=mask\s=\s)(?<Mask>.*)" >
 type MemoryRegex = Regex< @"(?<=mem\[)(?<Index>\d+)\]\s=\s(?<Val>\d+)" >
@@ -14,18 +14,10 @@ let updateString idx v str =
     |> update idx v
     |> String.ofArray
 
-let tupdate (idx: int64) (v: bigint) (list: Map<int64, bigint>) =
-    match Map.tryFindKey (fun k _t -> k = idx) list with
-    | None    -> Map.add idx v list
-    | Some(_) -> Map.change idx (konst (Some(v))) list
-
-
 let (|Mask|Mem|) str = 
     match MaskRegex().IsMatch str with
     | true -> Mask str
     | false -> Mem str
-
-let flatten xs = [|for x in xs do for y in x -> y|] 
 
 let parseMask line = MaskRegex().TypedMatch(line).Mask.Value
 
@@ -49,7 +41,7 @@ let rec getVariants (codes: string[]) =
     | None    -> codes
     | Some(n) -> 
         map (fun x -> [| updateString n '1' x ; updateString n '0' x |]) codes
-        |> flatten
+        |> Array.concat
         |> getVariants
 
 let decode mask id =
@@ -74,7 +66,7 @@ let rec runCommands commands memory mask =
             else
                 failwith "oops"
 
-let rec runDecoder commands (memory: Map<int64, bigint>) mask =
+let rec runDecoder commands (memory: Dictionary<int64, int64>) mask =
     match commands with
     | [||] -> memory
     | _    ->
@@ -83,8 +75,10 @@ let rec runDecoder commands (memory: Map<int64, bigint>) mask =
         | Mem x  ->
             let (idx, value) = parseMemory x
 
-            let m = decode mask idx |> fold (fun mem idx -> tupdate idx (bigint value) mem) memory
-            runDecoder (skip 1 commands) m mask
+            let m = decode mask idx 
+            for location in m do
+                memory.[location] <- int64 value
+            runDecoder (skip 1 commands) memory mask
 
 let content () =
     __SOURCE_DIRECTORY__ + "/input.txt"
@@ -95,8 +89,9 @@ let part1 () =
     |> sum
 
 let part2() =
-    runDecoder (content()) Map.empty ""
-    |> Map.values
+    let memory = new Dictionary<int64, int64> ()
+    runDecoder (content()) memory ""
+    |> (fun x -> x.Values)
     |> sum
 
 [<EntryPoint>]
