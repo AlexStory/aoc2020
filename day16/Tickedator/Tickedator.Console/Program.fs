@@ -93,7 +93,7 @@ let partTwo () =
     |> Map.values 
     |> Seq.map head
     |> map (fun i -> ticket.[i])
-    |> map (fun (n: int) -> bigint n)
+    |> map (int64)
     |> Seq.reduce ( * ) 
     |> printfn "%A"
 
