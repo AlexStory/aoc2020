@@ -35,3 +35,5 @@ day14: 205-206 ms <-- used mutation (same code swapping dictionary with an immut
 day15: 231-244 ms <-- used mutation (version with same logic, but using a Map took ~86 seconds)
 
 day16: 183-211 ms
+
+day17: 438-445 ms

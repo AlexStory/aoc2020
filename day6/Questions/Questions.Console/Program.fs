@@ -1,7 +1,7 @@
 open System.IO
 
 let content =
-    "input.txt"
+    __SOURCE_DIRECTORY__ + "/input.txt"
     |> File.ReadAllText
     |> fun x -> x.Split "\n\n"
 
@@ -24,11 +24,7 @@ let getAllReperesented strings =
 let removeNewlines (str: string) = str.Replace("\n", "")
 
 let path2 = 
-    content
-    |> Seq.map splitLines
-    |> Seq.map getAllReperesented
-    |> Seq.map Seq.length
-    |> Seq.sum
+    Seq.sumBy (splitLines >> getAllReperesented >> Seq.length) content
     //Seq.sumBy (splitLines >> getAllReperesented >> Seq.length) content
 
 let path1 =

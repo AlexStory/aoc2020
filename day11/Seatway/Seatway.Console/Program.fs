@@ -261,13 +261,10 @@ let rec loop board last iter=
         loop (Board.step board) board (iter+1)
 
 let rec loop' board last iter =
-    printfn "full: %d iter: %d" (Board.fullCount board) iter
     if board = last then
         board
     else
         loop' (Board.step' board) board (iter+1)
-
-
 
 [<EntryPoint>]
 let main argv =

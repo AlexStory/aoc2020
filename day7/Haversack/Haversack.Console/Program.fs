@@ -23,7 +23,7 @@ let createBag bagText =
 
 
 let content =
-    "input.txt"
+    __SOURCE_DIRECTORY__ + "/input.txt"
     |> File.ReadAllLines
     |> Seq.map createBag
 

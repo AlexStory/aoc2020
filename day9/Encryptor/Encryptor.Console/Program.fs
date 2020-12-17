@@ -1,64 +1,60 @@
 open System.IO
 
-let getCombinations (list: seq<bigint>) =
-    [
+let getCombinations (list: seq<int64>) =
+    [|
         for x in list do
             for y in list do
                 if x <> y then
                     x + y
-    ]
+    |]
 
 
 let content = 
     __SOURCE_DIRECTORY__ + "/input.txt"
     |> File.ReadAllLines
-    |> Seq.map bigint.Parse
+    |> Array.map int64
 
 
 let subset = content |> Seq.skip 25
 
 let possibilities i = 
     content 
-        |> Seq.skip (i) 
-        |> (Seq.take 25)
+        |> Array.skip (i) 
+        |> (Array.take 25)
         |> getCombinations 
 
 let isValid i v = 
     let possibles = possibilities i
-    Seq.contains v possibles
+    Array.contains v possibles
 
 
 let rec findSum n list=
-    if Seq.isEmpty list then 
+    if Array.isEmpty list then 
         (0, 0)
     else 
         let result  = 
             list
-            |> Seq.scan (fun acc (i , num) -> (i, num + snd acc)) (0, bigint 0)
+            |> Seq.scan (fun acc (i , num) -> (i, num + snd acc)) (0, 0L)
         match Seq.contains n (Seq.tail result |> Seq.map snd) with
         | true -> 
             let start = Seq.head list |> fst
             let stop = Seq.find (fun x -> snd x = n) result |> fst
             (start, stop)
-        | false -> findSum n (Seq.tail list)
+        | false -> findSum n (Array.tail list)
 
 let summate n list = 
-    findSum n (Seq.indexed list)
+    findSum n (Array.indexed list)
 
-subset
-    |> Seq.indexed
-    |> Seq.filter (fun (i, x) -> not (isValid i x))
-    |> Seq.iter (printfn "%A")
-
-
-
+// subset
+//     |> Seq.indexed
+//     |> Seq.filter (fun (i, x) -> not (isValid i x))
+//     |> Seq.iter (printfn "%A")
 
 [<EntryPoint>]
 let main argv =
-    let n = bigint 217430975
+    let n =  217430975L
     summate n content
     |> fun (start, stop) -> Seq.toArray(content).[start..stop]
     |> fun lst -> (Seq.min(lst)) + (Seq.max(lst))
-    // "alex"
     |> printfn "%A"
     0 // return an integer exit code

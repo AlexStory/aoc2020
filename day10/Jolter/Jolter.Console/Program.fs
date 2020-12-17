@@ -1,6 +1,5 @@
 open System.IO
 
-
 let getJolt (joltage, ones, threes) adapter =
     if joltage + 1 = adapter then
         (adapter, ones + 1, threes)
@@ -23,20 +22,15 @@ let canReach original target =
     target > original 
     && target - original <= 3
 
-
 let rec pathCount lst =
-    printfn "%A" lst
     match lst with
     | [_, count] -> count
     | (hn, hc) :: tail ->
         pathCount (List.map (fun (n, c) -> (n, if canReach hn n then hc + c else c)) tail)
 
-
-
 // let part1 = 
 //     differences
 //     |> fun (a, b, c) -> printfn "joltages: %d, ones: %d, threes: %d, answer: %d" a b c (b * (c + 1))
-
 
 [<EntryPoint>]
 let main argv =

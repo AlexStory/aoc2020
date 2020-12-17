@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="input.txt" />
     <Compile Include="Utils.fs" />
     <Compile Include="Password.fs" />
     <Compile Include="Program.fs" />

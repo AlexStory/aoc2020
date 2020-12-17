@@ -88,7 +88,7 @@ module Ticket =
 
 
 let content = 
-    "assets/input.txt"
+    __SOURCE_DIRECTORY__ + "/input.txt"
     |>File.ReadAllLines 
     |> Array.map (Ticket.create >> Ticket.seatId)
 

@@ -157,7 +157,7 @@ module Passport =
         && validatePassportId passport
 
 let content = 
-    "assets/input.txt"
+    __SOURCE_DIRECTORY__ + "/input.txt"
     |> File.ReadAllText
     |> fun x -> x.Split("\n\n")
     |> Array.map(fun x -> Passport.create (x.Replace("\n", " ")))

@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="../../assets/input.txt" CopyToOutputDirectory="Always"/>
+    <Content Include="input.txt" CopyToOutputDirectory="Always"/>
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>

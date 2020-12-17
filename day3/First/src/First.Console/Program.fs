@@ -9,7 +9,7 @@ module Console =
     | '.' -> Plain
     | _ -> failwith "Invalid Argument"
 
-    let content = File.ReadAllLines (__SOURCE_DIRECTORY__ + "../../../assets/input.txt")
+    let content = File.ReadAllLines (__SOURCE_DIRECTORY__ + "/input.txt")
     let x, y = 0, 0
     let height = Array.length content
     let trackWidth = content |> Array.head |> String.length
