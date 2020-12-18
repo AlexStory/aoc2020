@@ -16,7 +16,6 @@ let run' input args =
         results
         |> Array.sum
         |> printfn "%d"
-        printf "ok"
     else
         results
         |> Array.iter (printfn "%d")
@@ -44,6 +43,6 @@ let run input =
 let main argv =
     match argv.Length with
     | 0 -> printfn "no arguments given expected file"
-    | 1 -> run argv.[0]
+    | 1 -> run' argv.[0] [|"--all"|]
     | _ -> run' argv.[0] argv.[1..]
     0 
