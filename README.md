@@ -1,6 +1,6 @@
 # aoc2020
 
-All in F# going to try and keep all solutions immutable, but going to try and optimize and will post runtimes, and wether i had to make the immutable.
+All in F# going to try and keep all solutions immutable, but going to try and get every solution under 1 second and will post runtimes, and wether i had to make them immutable.
 
 All will be timed by (depending on wether i'm on my windows or linux machine at the time) `time dotnet [output]` or `Measure-Command { dotnet [output] }`. I'll run it three times and post the range.
 
