@@ -46,8 +46,7 @@ module Cube =
     let step cube =
         cube
         |> getActiveSpots
-        |> PSeq.filter (isActive cube)
-        |> PSeq.map (fst >> fromString)
+        |> PSeq.choose (fun x -> if isActive cube x then (x |> fst |> fromString |> Some) else None)
         |> PSeq.toArray
 
 
