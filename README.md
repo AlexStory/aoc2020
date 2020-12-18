@@ -37,3 +37,5 @@ day15: 231-244 ms <-- used mutation (version with same logic, but using a Map to
 day16: 183-211 ms
 
 day17: 438-445 ms
+
+day 18: 205-220 ms
